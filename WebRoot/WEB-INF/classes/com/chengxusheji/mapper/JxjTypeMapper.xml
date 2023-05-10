@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.JxjTypeMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加奖学金类型记录 -->
+	<insert id="addJxjType" parameterType="jxjType">
+		insert into t_jxjType(typeName,jxjMoney,pdbz,addTime) values 
+		(#{typeName},#{jxjMoney},#{pdbz},#{addTime})
+	</insert>
+
+	<!-- 按照查询条件分页查询奖学金类型记录 -->
+	<select id="queryJxjType" resultMap="jxjTypeMap" >
+		select t_jxjType.* from t_jxjType ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="jxjTypeMap" type="jxjType">
+        <id property="typeId" column="typeId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有奖学金类型记录 -->
+	<select id="queryJxjTypeList" resultMap="jxjTypeMap" >
+		select t_jxjType.* from t_jxjType ${where}
+	</select>
+
+    <!-- 按照查询条件的奖学金类型记录数 -->
+	<select id="queryJxjTypeCount" resultType="int">
+		select count(*) from t_jxjType ${where}
+	</select>
+
+	<!-- 根据主键查询某个奖学金类型记录 -->
+	<select id="getJxjType" parameterType="int" resultMap="jxjTypeMap">
+		select * from t_jxjType where t_jxjType.typeId = #{typeId}
+	</select>
+
+	<!-- 更新奖学金类型记录 -->
+	<update id="updateJxjType" parameterType="jxjType">
+		update t_jxjType set typeName=#{typeName},jxjMoney=#{jxjMoney},pdbz=#{pdbz},addTime=#{addTime} where typeId = #{typeId}
+	</update>
+
+	<!-- 删除奖学金类型记录 -->
+	<delete id="deleteJxjType" parameterType="int">
+		delete from t_jxjType where typeId=#{typeId}
+	</delete>
+
+</mapper>

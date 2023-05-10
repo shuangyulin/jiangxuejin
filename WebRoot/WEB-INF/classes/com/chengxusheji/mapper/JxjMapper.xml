@@ -1,0 +1,50 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.JxjMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加奖学金申请记录 -->
+	<insert id="addJxj" parameterType="jxj">
+		insert into t_jxj(jxjTypeObj,title,content,sqcl,userObj,fdyState,fdyUserName,glState,glResult) values 
+		(#{jxjTypeObj.typeId},#{title},#{content},#{sqcl},#{userObj.user_name},#{fdyState},#{fdyUserName},#{glState},#{glResult})
+	</insert>
+
+	<!-- 按照查询条件分页查询奖学金申请记录 -->
+	<select id="queryJxj" resultMap="jxjMap" >
+		select t_jxj.* from t_jxj,t_jxjType,t_userInfo ${where} and t_jxj.jxjTypeObj = t_jxjType.typeId and t_jxj.userObj = t_userInfo.user_name limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="jxjMap" type="jxj">
+        <id property="jxjId" column="jxjId" />
+        <association property="jxjTypeObj" column="jxjTypeObj" select="com.chengxusheji.mapper.JxjTypeMapper.getJxjType" />
+        <association property="userObj" column="userObj" select="com.chengxusheji.mapper.UserInfoMapper.getUserInfo" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有奖学金申请记录 -->
+	<select id="queryJxjList" resultMap="jxjMap" >
+		select t_jxj.* from t_jxj,t_jxjType,t_userInfo ${where} and t_jxj.jxjTypeObj = t_jxjType.typeId and t_jxj.userObj = t_userInfo.user_name
+	</select>
+
+    <!-- 按照查询条件的奖学金申请记录数 -->
+	<select id="queryJxjCount" resultType="int">
+		select count(*) from t_jxj,t_jxjType,t_userInfo ${where} and t_jxj.jxjTypeObj = t_jxjType.typeId and t_jxj.userObj = t_userInfo.user_name
+	</select>
+
+	<!-- 根据主键查询某个奖学金申请记录 -->
+	<select id="getJxj" parameterType="int" resultMap="jxjMap">
+		select * from t_jxj where t_jxj.jxjId = #{jxjId}
+	</select>
+
+	<!-- 更新奖学金申请记录 -->
+	<update id="updateJxj" parameterType="jxj">
+		update t_jxj set jxjTypeObj=#{jxjTypeObj.typeId},title=#{title},content=#{content},sqcl=#{sqcl},userObj=#{userObj.user_name},fdyState=#{fdyState},fdyUserName=#{fdyUserName},glState=#{glState},glResult=#{glResult} where jxjId = #{jxjId}
+	</update>
+
+	<!-- 删除奖学金申请记录 -->
+	<delete id="deleteJxj" parameterType="int">
+		delete from t_jxj where jxjId=#{jxjId}
+	</delete>
+
+</mapper>

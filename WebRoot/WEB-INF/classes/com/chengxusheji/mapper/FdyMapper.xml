@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.FdyMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加辅导员记录 -->
+	<insert id="addFdy" parameterType="fdy">
+		insert into t_fdy(fdyUserName,password,name,gender,birthDate,telephone,email,fdyMemo) values 
+		(#{fdyUserName},#{password},#{name},#{gender},#{birthDate},#{telephone},#{email},#{fdyMemo})
+	</insert>
+
+	<!-- 按照查询条件分页查询辅导员记录 -->
+	<select id="queryFdy" resultMap="fdyMap" >
+		select t_fdy.* from t_fdy ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="fdyMap" type="fdy">
+        <id property="fdyUserName" column="fdyUserName" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有辅导员记录 -->
+	<select id="queryFdyList" resultMap="fdyMap" >
+		select t_fdy.* from t_fdy ${where}
+	</select>
+
+    <!-- 按照查询条件的辅导员记录数 -->
+	<select id="queryFdyCount" resultType="int">
+		select count(*) from t_fdy ${where}
+	</select>
+
+	<!-- 根据主键查询某个辅导员记录 -->
+	<select id="getFdy" parameterType="string" resultMap="fdyMap">
+		select * from t_fdy where t_fdy.fdyUserName = #{fdyUserName}
+	</select>
+
+	<!-- 更新辅导员记录 -->
+	<update id="updateFdy" parameterType="fdy">
+		update t_fdy set password=#{password},name=#{name},gender=#{gender},birthDate=#{birthDate},telephone=#{telephone},email=#{email},fdyMemo=#{fdyMemo} where fdyUserName = #{fdyUserName}
+	</update>
+
+	<!-- 删除辅导员记录 -->
+	<delete id="deleteFdy" parameterType="string">
+		delete from t_fdy where fdyUserName=#{fdyUserName}
+	</delete>
+
+</mapper>

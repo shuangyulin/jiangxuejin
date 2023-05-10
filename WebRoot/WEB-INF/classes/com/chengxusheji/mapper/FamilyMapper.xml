@@ -1,0 +1,49 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.FamilyMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加家庭情况记录 -->
+	<insert id="addFamily" parameterType="family">
+		insert into t_family(userObj,familyDesc,updateTime) values 
+		(#{userObj.user_name},#{familyDesc},#{updateTime})
+	</insert>
+
+	<!-- 按照查询条件分页查询家庭情况记录 -->
+	<select id="queryFamily" resultMap="familyMap" >
+		select t_family.* from t_family,t_userInfo ${where} and t_family.userObj = t_userInfo.user_name limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="familyMap" type="family">
+        <id property="familyId" column="familyId" />
+        <association property="userObj" column="userObj" select="com.chengxusheji.mapper.UserInfoMapper.getUserInfo" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有家庭情况记录 -->
+	<select id="queryFamilyList" resultMap="familyMap" >
+		select t_family.* from t_family,t_userInfo ${where} and t_family.userObj = t_userInfo.user_name
+	</select>
+
+    <!-- 按照查询条件的家庭情况记录数 -->
+	<select id="queryFamilyCount" resultType="int">
+		select count(*) from t_family,t_userInfo ${where} and t_family.userObj = t_userInfo.user_name
+	</select>
+
+	<!-- 根据主键查询某个家庭情况记录 -->
+	<select id="getFamily" parameterType="int" resultMap="familyMap">
+		select * from t_family where t_family.familyId = #{familyId}
+	</select>
+
+	<!-- 更新家庭情况记录 -->
+	<update id="updateFamily" parameterType="family">
+		update t_family set userObj=#{userObj.user_name},familyDesc=#{familyDesc},updateTime=#{updateTime} where familyId = #{familyId}
+	</update>
+
+	<!-- 删除家庭情况记录 -->
+	<delete id="deleteFamily" parameterType="int">
+		delete from t_family where familyId=#{familyId}
+	</delete>
+
+</mapper>

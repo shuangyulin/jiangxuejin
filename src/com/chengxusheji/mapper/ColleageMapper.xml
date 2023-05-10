@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.ColleageMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加学院记录 -->
+	<insert id="addColleage" parameterType="colleage">
+		insert into t_colleage(colleageName,colleageMemo) values 
+		(#{colleageName},#{colleageMemo})
+	</insert>
+
+	<!-- 按照查询条件分页查询学院记录 -->
+	<select id="queryColleage" resultMap="colleageMap" >
+		select t_colleage.* from t_colleage ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="colleageMap" type="colleage">
+        <id property="collleageId" column="collleageId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有学院记录 -->
+	<select id="queryColleageList" resultMap="colleageMap" >
+		select t_colleage.* from t_colleage ${where}
+	</select>
+
+    <!-- 按照查询条件的学院记录数 -->
+	<select id="queryColleageCount" resultType="int">
+		select count(*) from t_colleage ${where}
+	</select>
+
+	<!-- 根据主键查询某个学院记录 -->
+	<select id="getColleage" parameterType="int" resultMap="colleageMap">
+		select * from t_colleage where t_colleage.collleageId = #{collleageId}
+	</select>
+
+	<!-- 更新学院记录 -->
+	<update id="updateColleage" parameterType="colleage">
+		update t_colleage set colleageName=#{colleageName},colleageMemo=#{colleageMemo} where collleageId = #{collleageId}
+	</update>
+
+	<!-- 删除学院记录 -->
+	<delete id="deleteColleage" parameterType="int">
+		delete from t_colleage where collleageId=#{collleageId}
+	</delete>
+
+</mapper>

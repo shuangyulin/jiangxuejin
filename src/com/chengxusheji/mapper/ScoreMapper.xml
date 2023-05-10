@@ -1,0 +1,51 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.ScoreMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加学生成绩记录 -->
+	<insert id="addScore" parameterType="score">
+		insert into t_score(termObj,userObj,colleageObj,zhcj,scoreDesc,scoreMemo) values 
+		(#{termObj.termId},#{userObj.user_name},#{colleageObj.collleageId},#{zhcj},#{scoreDesc},#{scoreMemo})
+	</insert>
+
+	<!-- 按照查询条件分页查询学生成绩记录 -->
+	<select id="queryScore" resultMap="scoreMap" >
+		select t_score.* from t_score,t_colleage,t_termInfo,t_userInfo ${where} and t_score.termObj = t_termInfo.termId and t_score.userObj = t_userInfo.user_name and t_score.colleageObj = t_colleage.collleageId limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="scoreMap" type="score">
+        <id property="scoreId" column="scoreId" />
+        <association property="termObj" column="termObj" select="com.chengxusheji.mapper.TermInfoMapper.getTermInfo" />
+        <association property="userObj" column="userObj" select="com.chengxusheji.mapper.UserInfoMapper.getUserInfo" />
+        <association property="colleageObj" column="colleageObj" select="com.chengxusheji.mapper.ColleageMapper.getColleage" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有学生成绩记录 -->
+	<select id="queryScoreList" resultMap="scoreMap" >
+		select t_score.* from t_score,t_colleage,t_termInfo,t_userInfo ${where} and t_score.termObj = t_termInfo.termId and t_score.userObj = t_userInfo.user_name and t_score.colleageObj = t_colleage.collleageId
+	</select>
+
+    <!-- 按照查询条件的学生成绩记录数 -->
+	<select id="queryScoreCount" resultType="int">
+		select count(*) from t_score,t_colleage,t_termInfo,t_userInfo ${where} and t_score.termObj = t_termInfo.termId and t_score.userObj = t_userInfo.user_name and t_score.colleageObj = t_colleage.collleageId
+	</select>
+
+	<!-- 根据主键查询某个学生成绩记录 -->
+	<select id="getScore" parameterType="int" resultMap="scoreMap">
+		select * from t_score where t_score.scoreId = #{scoreId}
+	</select>
+
+	<!-- 更新学生成绩记录 -->
+	<update id="updateScore" parameterType="score">
+		update t_score set termObj=#{termObj.termId},userObj=#{userObj.user_name},colleageObj=#{colleageObj.collleageId},zhcj=#{zhcj},scoreDesc=#{scoreDesc},scoreMemo=#{scoreMemo} where scoreId = #{scoreId}
+	</update>
+
+	<!-- 删除学生成绩记录 -->
+	<delete id="deleteScore" parameterType="int">
+		delete from t_score where scoreId=#{scoreId}
+	</delete>
+
+</mapper>
